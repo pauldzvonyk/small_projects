@@ -1,4 +1,5 @@
 from fpdf import FPDF
+import dropbox
 import webbrowser
 import os
 
@@ -41,7 +42,7 @@ class PdfReport:
         pdf.cell(w=30, h=40, txt="$", border=0, align="C", ln=1)
 
         # Change directory at this point to allow .output & .open methods below to execute smoothly
-        os.chdir("files")
+        os.chdir("my_files")
 
         # Create and save PDF file
         pdf.output(self.filename)

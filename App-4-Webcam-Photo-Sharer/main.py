@@ -1,4 +1,3 @@
-import wikipedia
 import json
 from urllib import request
 from kivy.app import App
@@ -9,7 +8,7 @@ Builder.load_file('frontend.kv')
 
 
 class ScreenOne(Screen):
-    def search_image(self):
+    def get_image_link(self):
         # Get user query from TextInput in kivy GUI
         query = self.manager.current_screen.ids.user_query.text
         # Get list of Wikipedia page and first image URL
@@ -26,7 +25,6 @@ class ScreenOne(Screen):
         if 'original' in page_info:
             original_image_url = page_info['original']['source']
             print(f"Full-size Image URL for {query}: {original_image_url}")
-
             # Download image to local files
             image_path = f"images/{query}.jpg"
             request.urlretrieve(original_image_url, image_path)

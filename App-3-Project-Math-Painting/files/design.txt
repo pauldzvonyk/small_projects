@@ -19,4 +19,4 @@ Objects: Square:
             width
             height
             color
-            make(imagepath)
+            make(image_path)

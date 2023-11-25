@@ -1,0 +1,19 @@
+<CameraScreen>:
+    GridLayout:
+        cols: 1
+        padding: 10
+        spacing: 10
+        Camera:
+            resolution: (600, 480)
+            size_hint_y: 0.8
+        Button:
+            text: 'Start Camera'
+            size_hint_y: 0.1
+        Button:
+            text: 'Capture'
+            size_hint_y: 0.1
+
+<RootWidget>:
+    CameraScreen:
+        id: camera_screen
+        name: "camera_screen"

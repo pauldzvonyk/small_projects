@@ -8,9 +8,19 @@ Builder.load_file("frontend.kv")
 class CameraScreen(Screen):  # (requirement from kivy)
     pass
 
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+    def capture(self):
+        pass
+
 
 class ImageScreen(Screen):  # (requirement from kivy)
     pass
+
 
 
 class RootWidget(ScreenManager):
@@ -19,7 +29,7 @@ class RootWidget(ScreenManager):
 
 class MainApp(App):
     def build(self):
-        return RootWidget
+        return RootWidget()
 
 
 MainApp().run()

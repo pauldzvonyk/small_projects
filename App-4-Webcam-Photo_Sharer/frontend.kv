@@ -42,7 +42,7 @@
             id: link
             text: ''
         GridLayout:
-            cols: 2
+            cols: 3
             spacing: 10
             size_hint_y: 0.1
             Button:
@@ -51,11 +51,20 @@
                 on_press: root.copy_link()
                 background_normal: 'images/normal.png'
                 background_down: 'images/down.png'
+                size_hint_x: 0.45
             Button:
                 text: 'Open Link'
                 on_press: root.open_link()
                 background_normal: 'images/normal.png'
                 background_down: 'images/down.png'
+                size_hint_x: 0.45
+            Button:
+                text: 'Back'
+                size_hint_x: 0.1
+                background_normal: 'images/normal.png'
+                background_down: 'images/down.png'
+                on_press: root.manager.current = 'camera_screen'
+
 
 <RootWidget>:
     canvas.before:

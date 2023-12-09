@@ -24,3 +24,12 @@ body {
     background-color: GhostWhite;
     padding: 20px;
 }
+
+.results {
+    padding: 20px;
+    margin: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    color: white;
+    background-color: grey;
+    }

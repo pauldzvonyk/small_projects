@@ -21,8 +21,8 @@ class Temperature:
     }
 
     def __init__(self, website, country, city):
-        self.country = country.replace(" ", "-").strip()
-        self.city = city.replace(" ", "-").strip()
+        self.country = country.replace(" ", "-")
+        self.city = city.replace(" ", "-")
         self.website = website
 
     def get(self):
@@ -42,5 +42,6 @@ class Temperature:
 
 
 if __name__ == '__main__':
-    local_temperature = Temperature(website='https://www.timeanddate.com/weather/', country='italy', city='rome')
+    city = input("Enter city: ")
+    local_temperature = Temperature(website='https://www.timeanddate.com/weather/', country='usa', city=city)
     print(local_temperature.get())

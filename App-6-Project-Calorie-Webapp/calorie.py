@@ -18,6 +18,7 @@ class Calorie:
         return result
 
 
-local_temperature = Temperature(website='https://www.timeanddate.com/weather/', country='italy', city='rome').get()
-calories = Calorie(weight=85, height=190, age=42, temperature=local_temperature)
-print(calories.calculate())
+if __name__ == "__main__":
+    local_temperature = Temperature(website='https://www.timeanddate.com/weather/', country='italy', city='rome').get()
+    calories = Calorie(weight=85, height=190, age=42, temperature=local_temperature)
+    print(calories.calculate())

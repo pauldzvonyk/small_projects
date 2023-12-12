@@ -42,6 +42,10 @@ class Temperature:
 
 
 if __name__ == '__main__':
-    city = input("Enter city: ")
-    local_temperature = Temperature(website='https://www.timeanddate.com/weather/', country='usa', city=city)
-    print(local_temperature.get())
+    try:
+        country = input("Enter country: ")
+        city = input("Enter city: ")
+        local_temperature = Temperature(website='https://www.timeanddate.com/weather/', country=country, city=city)
+        print(local_temperature.get())
+    except ValueError as e:
+        print(f"Could not find requested information, try different location. \n{e}.")

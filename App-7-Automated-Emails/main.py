@@ -8,7 +8,6 @@ import time
 
 
 def send_email():
-    global name
     name = row['name']
     interest = row['interest']
     # Introducing datetime variables ir required str format

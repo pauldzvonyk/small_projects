@@ -29,8 +29,9 @@ class NewsFeed:
         content = response.json()
         articles = content['articles']
         return articles
-
+7
     def _buid_url(self):
+        # Build URL string
         return f'{self.base_url}' \
                f'qInTitle={self.interest}&' \
                f'from={self.from_date}&' \

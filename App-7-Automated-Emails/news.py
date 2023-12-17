@@ -15,22 +15,28 @@ class NewsFeed:
         self.language = language
 
     def get(self):
-        url = f'{self.base_url}' \
-              f'qInTitle={self.interest}&' \
-              f'from={self.from_date}&' \
-              f'to={self.to_date}&' \
-              f'language={self.language}&' \
-              f'apiKey={self.api_key}'
+        url = self._buid_url()
 
-        response = requests.get(url)
-        content = response.json()
-        articles = content['articles']
+        articles = self._get_articles(url)
 
         email_body = ''
-
         for article in articles:
             email_body = email_body + article['title'] + '\n' + article['url'] + '\n\n'
         return email_body
+
+    def _get_articles(self, url):
+        response = requests.get(url)
+        content = response.json()
+        articles = content['articles']
+        return articles
+
+    def _buid_url(self):
+        return f'{self.base_url}' \
+               f'qInTitle={self.interest}&' \
+               f'from={self.from_date}&' \
+               f'to={self.to_date}&' \
+               f'language={self.language}&' \
+               f'apiKey={self.api_key}'
 
 
 if __name__ == "__main__":

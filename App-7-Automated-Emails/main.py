@@ -20,6 +20,7 @@ for index, row in df.iterrows():
 
     email = yagmail.SMTP(user="reptile1601@gmail.com", password="qlngqqyqiaqvqgro")
 
+    # Constructing email in yagmail format
     email.send(to=row['email'],
                subject=f'Your latest {interest} news for today!',
                contents=f"Good morning {name}, this is what's new on {interest} today, check it out!\n {news_feed.get()}",

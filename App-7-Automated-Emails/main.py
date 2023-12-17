@@ -1,41 +1,27 @@
-# api key: f0c72477f947461a8ca2500ea41ee7df
-import requests
+# Gmail app password: qlngqqyqiaqvqgro
 
+import yagmail
+import pandas
+from news import NewsFeed
+import datetime
 
-class NewsFeed:
-    """Representing multiple news titles and relative urls as string
-    """
-    base_url = 'https://newsapi.org/v2/everything?'
-    api_key = 'f0c72477f947461a8ca2500ea41ee7df'
+df = pandas.read_excel('files/people.xls')
 
-    def __init__(self, interest, from_date, to_date, language):
-        self.interest = interest
-        self.from_date = from_date
-        self.to_date = to_date
-        self.language = language
+for index, row in df.iterrows():
+    emails = row['name']
+    name = row['name']
+    interest = row['interest']
 
-    def get(self):
-        url = f'{self.base_url}' \
-              f'qInTitle={self.interest}&' \
-              f'from={self.from_date}&' \
-              f'to={self.to_date}&' \
-              f'language={self.language}&' \
-              f'apiKey={self.api_key}'
+    # Introducing datetime variables ir required str format
+    yesterday = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+    today = datetime.datetime.now().strftime('%Y-%m-%d')
 
-        response = requests.get(url)
-        content = response.json()
-        articles = content['articles']
+    news_feed = NewsFeed(interest=interest, from_date=yesterday, to_date=today)
 
-        email_body = ''
+    email = yagmail.SMTP(user="reptile1601@gmail.com", password="qlngqqyqiaqvqgro")
 
-        for article in articles:
-            email_body = email_body + article['title'] + '\n' + article['url'] + '\n\n'
-        return email_body
-
-
-news = NewsFeed(interest='rome', from_date='2023/12/11', to_date='2023/12/12', language='en')
-print(news.get())
-
-
-
+    email.send(to=row['email'],
+               subject=f'Your latest {interest} news for today!',
+               contents=f"Good morning {name}, this is what's new on {interest} today, check it out!\n {news_feed.get()}",
+               attachments=None)
 

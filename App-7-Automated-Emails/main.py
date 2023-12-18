@@ -11,7 +11,7 @@ def send_email():
     global name
     name = row['name']
     interest = row['interest']
-    # Introducing datetime variables ir required str format
+    # Introducing datetime variables in required str format
     yesterday = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     today = datetime.datetime.now().strftime('%Y-%m-%d')
     news_feed = NewsFeed(interest=interest, from_date=yesterday, to_date=today)

@@ -31,5 +31,3 @@ class Home:
         return wp
 
 
-jp.Route(Home.path, Home.serve)
-jp.justpy()

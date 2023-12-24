@@ -1,6 +1,8 @@
 import justpy as jp
 import os
 import pandas
+from webapp import layout
+from webapp import page
 
 
 class Definition:
@@ -14,13 +16,18 @@ class Definition:
         return tuple(df.loc[df['word'] == self.term]['definition'])
 
 
-class Dictionary:
+class Dictionary(page.Page):
     path = '/dictionary'
 
     @classmethod
     def serve(cls, req):
         wp = jp.QuasarPage(tailwind=True)
-        main_div = jp.Div(a=wp, classes='bg-gray-200 h-screen')
+
+        lay = layout.DefaultLayout(a=wp)
+
+        container = jp.QPageContainer(a=lay)
+
+        main_div = jp.Div(a=container, classes='bg-gray-200 h-screen')
 
         jp.Div(a=main_div, text='Instant Dictionary',
                classes='italic text-3xl text-purple-900 text-center')

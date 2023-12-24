@@ -1,6 +1,6 @@
 import justpy as jp
-import pandas
 import os
+import pandas
 
 
 class Definition:
@@ -28,22 +28,16 @@ class Dictionary:
                classes='italic text-lg text-center')
 
         input_div = jp.Div(a=main_div, classes='italic grid grid-cols-2 m-5')
-        input_box = jp.Input(a=input_div, placeholder='Start typing here...',
-                             classes='text-lg bg-gray-100 focus:bg-white m-5 border-2 border-black')
-        output_box = jp.Div(a=main_div, classes='border-2 border-black h-40 m-5')
-        jp.Button(a=input_div, text='Get Definition', click=cls.get_definition, inputbox=input_box,
-                  outputbox=output_box,
-                  classes='bg-red-300 m-5 border-2 border-black')
 
-        print(cls, req)
+        output_box = jp.Div(a=main_div, classes='border-2 border-black h-40 m-5')
+
+        input_box = jp.Input(a=input_div, placeholder='Start typing here...', outputbox=output_box,
+                             classes='text-lg bg-gray-100 focus:bg-white m-5 border-2 border-black')
+        input_box.on('input', cls.get_definition)
+
         return wp
 
     @staticmethod
     def get_definition(widget, msg):
-        word_definition = Definition(widget.inputbox.value).get()
-        widget.outputbox.text = word_definition
-
-
-# jp.Route(Dictionary.path, Dictionary.serve)
-#
-# jp.justpy()
+        word_definition = Definition(widget.value).get()
+        widget.outputbox.text = " ".join(word_definition)

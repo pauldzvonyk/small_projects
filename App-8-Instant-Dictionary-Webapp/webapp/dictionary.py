@@ -1,4 +1,17 @@
 import justpy as jp
+import pandas
+import os
+
+
+class Definition:
+    def __init__(self, term):
+        self.term = term
+
+    def get(self):
+        script_dir = os.path.dirname(__file__)
+        file_path = os.path.join(script_dir, '../data.csv')
+        df = pandas.read_csv(file_path)
+        return tuple(df.loc[df['word'] == self.term]['definition'])
 
 
 class Dictionary:
@@ -27,4 +40,10 @@ class Dictionary:
 
     @staticmethod
     def get_definition(widget, msg):
-        widget.outputbox.text = widget.inputbox.value
+        word_definition = Definition(widget.inputbox.value).get()
+        widget.outputbox.text = word_definition
+
+
+# jp.Route(Dictionary.path, Dictionary.serve)
+#
+# jp.justpy()

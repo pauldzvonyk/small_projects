@@ -1,19 +1,25 @@
 import justpy as jp
-import os
-import pandas
+# import os
+# import pandas
 from webapp import layout
 from webapp import page
+import requests
 
+"""STEP 2.
+Read STEP 1 in main.py first.
+Uncomment imports above as well as Definition class below.
+Go to the bottom and follow STEP 3
+"""
 
-class Definition:
-    def __init__(self, term):
-        self.term = term
-
-    def get(self):
-        script_dir = os.path.dirname(__file__)
-        file_path = os.path.join(script_dir, '../data.csv')
-        df = pandas.read_csv(file_path)
-        return tuple(df.loc[df['word'] == self.term]['definition'])
+# class Definition:
+#     def __init__(self, term):
+#         self.term = term
+#
+#     def get(self):
+#         script_dir = os.path.dirname(__file__)
+#         file_path = os.path.join(script_dir, '../data.csv')
+#         df = pandas.read_csv(file_path)
+#         return tuple(df.loc[df['word'] == self.term]['definition'])
 
 
 class Dictionary(page.Page):
@@ -46,5 +52,11 @@ class Dictionary(page.Page):
 
     @staticmethod
     def get_definition(widget, msg):
-        word_definition = Definition(widget.value).get()
-        widget.outputbox.text = " ".join(word_definition)
+        """STEP 3
+        Comment out 'req' and 'data' and uncomment 'defined' variables.
+        Pass 'defined' variable in .join() method like -> " ".join(defined)
+        """
+        req = requests.get(f"http://127.0.0.1:8000/api?w={widget.value}")
+        data = req.json()
+        # defined = Definition(widget.value).get()
+        widget.outputbox.text = " ".join(data['definition'])

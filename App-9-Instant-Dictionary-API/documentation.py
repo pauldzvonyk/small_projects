@@ -17,7 +17,7 @@ class Doc:
         jp.Br(a=main_div)
         jp.Div(a=main_div, text="Following url request: ", classes="underline")
         jp.Br(a=main_div)
-        jp.Strong(a=main_div, text="http//:www.example.com/api?w=moon")
+        jp.Strong(a=main_div, text="http://www.example.com/api?w=moon")
         jp.Hr(a=main_div)
         jp.Br(a=main_div)
         jp.Div(a=main_div, text="Returns following response in Json format: ", classes="underline")

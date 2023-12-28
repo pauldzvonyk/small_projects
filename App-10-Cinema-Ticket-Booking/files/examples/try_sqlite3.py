@@ -71,10 +71,20 @@ def delete_record():
     conn.close()
 
 
-create_table()
+def update_value_with_queries(occupied, seat_id):
+    conn = sqlite3.connect("../../my_cinema.db")
+    conn.execute("""
+    UPDATE "Seat" SET "taken"=? WHERE "seat_id"=?
+    """, [occupied, seat_id])
+    conn.commit()
+    conn.close()
+
+
+# create_table()
 # insert_record()
 # print(select_all())
 # print(select_specific_columns())
 # print(select_with_conditions())
 # update_value()
 # delete_record()
+# update_value_with_queries(occupied=0, seat_id="A2")

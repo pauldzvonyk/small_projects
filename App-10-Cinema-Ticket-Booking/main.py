@@ -66,8 +66,8 @@ card_holder = input("Enter card holder: ").title()
 
 user = User(user_name)
 seat = Seat(user_seat)
-user_card = Card(card_type, card_number, card_cvc, card_holder)
+card = Card(card_type, card_number, card_cvc, card_holder)
 
-user.buy(seat, user_card)
+user.buy(seat, card)
 
 

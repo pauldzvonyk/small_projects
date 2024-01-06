@@ -62,7 +62,7 @@ class Card:
                         """, [result, self.number])
             conn.commit()
             conn.close()
-            print(result)
+            print("Purchase successful, we will send you a ticket in pdf format. Thank you very much!")
             return result
         except TypeError:
             print("Invalid card, try again.")

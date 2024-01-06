@@ -1,4 +1,6 @@
 import sqlite3
+import random
+from fpdf import FPDF
 
 
 class User:
@@ -10,6 +12,9 @@ class User:
             seat_price = seat.is_free()
             card.validate(seat_price)
             seat.occupy()
+            ticket_id = random.randint(100000, 999999)
+            print_ticket = Ticket(id=ticket_id, user=self.name, price=seat_price, seat_number=seat.seat_id)
+            print_ticket.to_pdf()
 
 
 class Seat:
@@ -46,14 +51,47 @@ class Card:
         self.holder = holder
 
     def validate(self, price):
-        conn = sqlite3.connect("banking.db")
-        cursor = conn.execute("""
-            SELECT "balance" FROM "Card" WHERE "number"=? 
-            """, [self.number])
-        result = cursor.fetchone()[0] - price
-        conn.close()
-        print(result)
-        return result
+        try:
+            conn = sqlite3.connect("banking.db")
+            cursor = conn.execute("""
+                SELECT "balance" FROM "Card" WHERE "number"=? AND "cvc"=?
+                """, [self.number, self.cvc])
+            result = cursor.fetchone()[0] - price
+            conn.execute("""
+                        UPDATE "Card" SET "balance"=? WHERE "number"=?
+                        """, [result, self.number])
+            conn.commit()
+            conn.close()
+            print(result)
+            return result
+        except TypeError:
+            print("Invalid card, try again.")
+
+
+class Ticket:
+    def __init__(self, id, user, price, seat_number):
+        self.id = id
+        self.user = user
+        self.price = price
+        self.seat_number = seat_number
+
+    def to_pdf(self):
+        pdf = FPDF(orientation="P", unit="pt", format="A4")  # default parameters (just to remember what they are)
+        pdf.add_page()
+
+        pdf.set_font(family="Times", size=24, style="I")
+        pdf.cell(w=0, h=60, text="Your Ticket", border=1, align="C", new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(w=60, h=40, text="Dear ")
+        pdf.cell(w=250, h=40, text=str(self.user), align="C")
+        pdf.cell(w=0, h=40, text="Thank you very much!", new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(w=200, h=40, text="Your Ticket ID is:   ")
+        pdf.cell(w=0, h=40, text=str(self.id), new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(w=150, h=40, text="Your seat is: ")
+        pdf.cell(w=150, h=40, text=str(self.seat_number), new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(w=300, h=40, text="The price paid for the ticket is:")
+        pdf.cell(w=60, h=40, text=str(self.price))
+        pdf.cell(w=0, h=40, text="Euros", new_x="LMARGIN", new_y="NEXT")
+        pdf.output("ticket.pdf")
 
 
 user_name = input("Enter your name: ").title()
@@ -63,11 +101,8 @@ card_number = input("Enter card number: ")
 card_cvc = input("Enter card cvc: ")
 card_holder = input("Enter card holder: ").title()
 
-
 user = User(user_name)
 seat = Seat(user_seat)
 card = Card(card_type, card_number, card_cvc, card_holder)
 
 user.buy(seat, card)
-
-

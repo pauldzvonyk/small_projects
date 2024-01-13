@@ -1,6 +1,6 @@
 import sqlite3
-import random
 from fpdf import FPDF
+import random
 
 
 class User:
@@ -9,71 +9,73 @@ class User:
 
     def buy(self, seat, card):
         if seat.is_free():
-            seat_price = seat.is_free()
-            card.validate(seat_price)
-            seat.occupy()
-            ticket_id = random.randint(100000, 999999)
-            print_ticket = Ticket(id=ticket_id, user=self.name, price=seat_price, seat_number=seat.seat_id)
-            print_ticket.to_pdf()
+            price = seat.get_price()
+            if card.validate(price=price):
+                seat.occupy()
+                ticket_id = random.randint(159856, 356824)
+                ticket = Ticket(user=self.name, seat_number=seat.number, id=ticket_id, price=price)
+                ticket.to_pdf()
+        else:
+            print("The seat is already occupied, please, choose another one.")
 
 
 class Seat:
-    def __init__(self, seat_id):
-        self.seat_id = seat_id
+    con = sqlite3.connect("my_cinema.db")
+
+    def __init__(self, number):
+        self.number = number
 
     def is_free(self):
-        conn = sqlite3.connect("my_cinema.db")
-        cursor = conn.execute("""
-            SELECT "taken", "price" FROM "Seat" WHERE "seat_id"=?
-            """, [self.seat_id])
-        result = cursor.fetchall()[0]
-        if result[0] == 0:
-            price = result[1]
-            return price
+        cursor = self.con.execute("""SELECT "taken" FROM "Seat" WHERE "seat_id"=?""", [self.number])
+        status = cursor.fetchone()[0]
+        if status == 0:
+            return True
         else:
-            print("The seat is already taken, choose another one.")
-        conn.close()
+            return False
 
     def occupy(self):
-        conn = sqlite3.connect("my_cinema.db")
-        conn.execute("""
-            UPDATE "Seat" SET "taken"=1 WHERE "seat_id"=?
-            """, [self.seat_id])
-        conn.commit()
-        conn.close()
+        self.con.execute("""UPDATE "Seat" SET "taken"=1 WHERE "seat_id"=?""", [self.number])
+        self.con.commit()
+        self.con.close()
+
+    def get_price(self):
+        cursor = self.con.execute("""SELECT "price" FROM "Seat" WHERE "seat_id"=?""", [self.number])
+        price = cursor.fetchone()[0]
+        return price
 
 
 class Card:
-    def __init__(self, type, number, cvc, holder):
+    con = sqlite3.connect("banking.db")
+
+    def __init__(self, type, card_number, cvc, holder):
         self.type = type
-        self.number = number
+        self.card_number = card_number
         self.cvc = cvc
         self.holder = holder
 
     def validate(self, price):
         try:
-            conn = sqlite3.connect("banking.db")
-            cursor = conn.execute("""
-                SELECT "balance" FROM "Card" WHERE "number"=? AND "cvc"=?
-                """, [self.number, self.cvc])
-            result = cursor.fetchone()[0] - price
-            conn.execute("""
-                        UPDATE "Card" SET "balance"=? WHERE "number"=?
-                        """, [result, self.number])
-            conn.commit()
-            conn.close()
-            print("Purchase successful, we will send you a ticket in pdf format. Thank you very much!")
-            return result
+            cursor = self.con.execute("""SELECT "balance" FROM "Card" WHERE "number"=? AND "cvc"=? AND "holder"=?""",
+                                      [self.card_number, self.cvc, self.holder])
+
+            new_balance = cursor.fetchone()[0] - price
+            updated_balance = self.con.execute("""UPDATE "Card" SET "balance"=? WHERE "number"=? AND "cvc"=? AND 
+            "holder"=?""",
+                                               [new_balance, self.card_number, self.cvc, self.holder])
+            self.con.commit()
+            self.con.close()
+            print("The purchase was successful, you will send you your ticket in pdf format")
+            return updated_balance
         except TypeError:
-            print("Invalid card, try again.")
+            print("Something is wrong with your card, please, contact your bank.")
 
 
 class Ticket:
-    def __init__(self, id, user, price, seat_number):
-        self.id = id
+    def __init__(self, user, seat_number, id, price):
         self.user = user
-        self.price = price
         self.seat_number = seat_number
+        self.id = id
+        self.price = price
 
     def to_pdf(self):
         pdf = FPDF(orientation="P", unit="pt", format="A4")  # default parameters (just to remember what they are)
@@ -93,18 +95,23 @@ class Ticket:
         pdf.cell(w=300, h=40, text="The price paid for the ticket is:", border="LTB")
         pdf.cell(w=60, h=40, text=str(self.price), border="TB")
         pdf.cell(w=0, h=40, text="Euros", border="TRB", new_x="LMARGIN", new_y="NEXT")
-        pdf.output("ticket.pdf")
+        pdf.output("your_ticket.pdf")
 
 
-user_name = input("Enter your name: ").title()
-user_seat = input("Enter seat: ").title()
-card_type = input("Enter card type: ").title()
-card_number = input("Enter card number: ")
-card_cvc = input("Enter card cvc: ")
-card_holder = input("Enter card holder: ").title()
+user_name = input("Please, enter your name: ").title()
+seat_number = input("Please, enter your desired seat: ").title()
+card_type = input("What is your card type? (Visa, MasterCard etc...): ").title()
+while True:
+    try:
+        card_number = int(input("Enter your card number: "))
+        card_cvc = int(input("Enter the cvc of your card: "))
+        break
+    except ValueError:
+        print("The cards number and cvc contain only numbers.")
+card_holder = input("Enter the name of the card holder: ").title()
+
 
 user = User(user_name)
-seat = Seat(user_seat)
-card = Card(card_type, card_number, card_cvc, card_holder)
-
-user.buy(seat, card)
+seat = Seat(seat_number)
+card = Card(card_type, card_number, card_cvc, "John Smith")
+user.buy(seat=seat, card=card)
